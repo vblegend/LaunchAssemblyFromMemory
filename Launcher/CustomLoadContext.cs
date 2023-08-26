@@ -20,10 +20,8 @@ namespace Launcher
             this.InitRuntimeDirs();
             this.ResolvingUnmanagedDll += CustomLoadContext_ResolvingUnmanagedDll;
             this.Resolving += CustomLoadContext_Resolving;
-            //AssemblyLoadContext.Default.Resolving += CustomLoadContext_Resolving;
-
+            AssemblyLoadContext.Default.Resolving += CustomLoadContext_Resolving;
         }
-
 
         private void InitRuntimeDirs()
         {
@@ -49,12 +47,13 @@ namespace Launcher
         }
 
 
-
+       
 
 
         private Assembly? CustomLoadContext_Resolving(AssemblyLoadContext context, AssemblyName assemblyName)
         {
             if (assemblyName.Name == null) return null;
+            var myCIintl = assemblyName.CultureInfo; 
             var name = assemblyName.Name.Split(',')[0];
             var dll_name = name + ".dll";
             Console.WriteLine($"Resolving {dll_name}");
