@@ -11,13 +11,13 @@ namespace Launcher
     public class P
     {
         [DllImport("aasdsdd.dll")]
-        public static extern bool Beep(int frequency, int duration);
+        public static extern bool SASDD(int frequency, int duration);
         public static void Main(string[] args)
         {
             Console.WriteLine("Hello, aaaa");
             Console.WriteLine(JsonConvert.SerializeObject(args));
             Console.WriteLine("Hello, World!");
-            //Beep(1, 2);
+            //SASDD(1, 2);
         }
 
 

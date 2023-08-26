@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace TestWinForms
 {
     internal static class Program
@@ -8,11 +10,22 @@ namespace TestWinForms
         [STAThread]
         static void Main(String[] args)
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-            ApplicationConfiguration.Initialize();
-            Application.SetCompatibleTextRenderingDefault(true);
-            Application.Run(new Form1());
+            new SharpDXDemo().Setup();
+        }
+
+
+
+
+
+
+        private static Int64 Id { get; set; }
+
+        [ModuleInitializer]
+        internal static void LazyInitializer()
+        {
+            Console.WriteLine($"Static Id = {Id}; Id++;");
+            Id++;
+            Console.WriteLine("Module.Initializer");
         }
     }
 }
