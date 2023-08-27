@@ -14,7 +14,7 @@ namespace Launcher
         {
             CultureInfo ci = CultureInfo.InstalledUICulture;
             Assembly assembly = null;
-            var filename = @"..\net6.0-windows\TestWinForms.dll";
+            var filename = @"..\net6.0-windows\WinGame.Disktop.dll";
             //Console.CancelKeyPress += delegate {
             //    // call methods to clean up
             //    Console.WriteLine("exiting");

@@ -17,8 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DSoft.SharpDX.Desktop" Version="4.2.1" />
     <PackageReference Include="SharpDX" Version="4.2.0" />
-    <PackageReference Include="SharpDX.Desktop" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct2D1" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct3D10" Version="4.2.0" />
     <PackageReference Include="SharpDX.DXGI" Version="4.2.0" />
