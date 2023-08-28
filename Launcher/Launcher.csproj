@@ -8,6 +8,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <Platforms>AnyCPU;x64</Platforms>
     <BaseOutputPath>..\bin</BaseOutputPath>
+    <PackageOutputPath>..\bin\Debug\</PackageOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
