@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.BitmapFonts;
 using MonoGame.Extended.ViewportAdapters;
+
 using System;
 using System.Diagnostics;
 
@@ -23,7 +24,8 @@ namespace WinGame.Disktop
         private VertexPositionColor[] _vertexPositionColors;
         private BasicEffect _basicEffect;
         private Texture2D _textTexture;
-
+        private SimpleFps fps = new SimpleFps();
+        private SpriteFont _font;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -65,6 +67,10 @@ namespace WinGame.Disktop
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            this.TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d);
+            this.IsFixedTimeStep = false;
+            _graphics.SynchronizeWithVerticalRetrace = false;
+            _graphics.ApplyChanges();
 
             base.Initialize();
         }
@@ -87,14 +93,21 @@ namespace WinGame.Disktop
             _basicEffect.VertexColorEnabled = true;
             _basicEffect.World = Matrix.CreateOrthographicOffCenter(0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 0, 0, 1);
 
-            var font = Content.Load<BitmapFont>("Sensation");
-            BitmapFont.UseKernings = false;
-
+            _font = Content.Load<SpriteFont>("File");
+  
             GraphicUtils.Test();
 
 
             Stopwatch sw = Stopwatch.StartNew();
-            _textTexture = GraphicUtils.BuildString(GraphicsDevice, "你好，世界10", 0, 0, new System.Drawing.Font("Microsoft YaHei", 36));
+          
+            for (int i = 0; i < 100; i++)
+            {
+                _textTexture = GraphicUtils.BuildString(GraphicsDevice, "56%", new System.Drawing.Font("Microsoft YaHei", 12));
+                _textTexture = GraphicUtils.BuildString(GraphicsDevice, "35%", new System.Drawing.Font("Microsoft YaHei", 12));
+
+            }
+
+
             sw.Stop();
 
             Console.WriteLine(sw.ElapsedMilliseconds);
@@ -107,10 +120,10 @@ namespace WinGame.Disktop
                 Exit();
 
             // TODO: Add your update logic here
-            value -= 1;
+            value -= 0.01;
             if (value < 0) value = 360;
 
-
+            fps.Update(gameTime);
             base.Update(gameTime);
         }
 
@@ -136,10 +149,25 @@ namespace WinGame.Disktop
             _spriteBatch.Draw(_textTexture, new Rectangle(200, 300, _textTexture.Width, _textTexture.Height), Color.Blue); //...and draw it!
 
 
+
+            var texture = GraphicUtils.BuildString(GraphicsDevice, $"{Math.Round(value / 360 * 100)}%", new System.Drawing.Font("Microsoft YaHei", 14));
+
+            _spriteBatch.Draw(texture, new Rectangle(230, 240, texture.Width, texture.Height), Color.White);
+
+
+
+
+            fps.DrawFps(_spriteBatch, _font, new Vector2(10f, 10f), Color.MonoGameOrange);
+
+
+
+
+
+
             _spriteBatch.End();
 
 
-
+            texture.Dispose();
             //GraphicsDevice.RasterizerState = RasterizerState.CullNone;
             //GraphicsDevice.RasterizerState = new RasterizerState
             //{
