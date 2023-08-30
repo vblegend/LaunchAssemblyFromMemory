@@ -9,6 +9,7 @@ namespace WinGame.Disktop
 
     // http://vodacek.zvb.cz/archiv/604.html
     // https://github.com/z2oh/C3.MonoGame.Primitives2D/blob/master/Primitives2D.cs
+    // https://github.com/Zintom/BitmapTextRenderer/blob/master/BitmapTextRenderer.cs
 
     public class Game1 : Game
     {
