@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SharpDX.Direct2D1;
+using SharpDX.Direct3D9;
 using System;
 
 namespace WinGame.Disktop
@@ -29,7 +31,34 @@ namespace WinGame.Disktop
             _graphics.PreferredBackBufferHeight = 600;
             _graphics.PreferMultiSampling = true;
             IsMouseVisible = true;
+
+
         }
+
+        private void  RenderBlock()
+        {
+
+            RenderTarget2D rt = new RenderTarget2D(GraphicsDevice, 200, 200);
+            Rectangle rect = new Rectangle(0, 0, 200, 200);
+            GraphicsDevice.SetRenderTarget(rt);
+            GraphicsDevice.Clear(Color.Blue);
+
+            //SpriteBatch.Begin(SpriteSortMode.Immediate,
+            //                                BlendState.AlphaBlend,
+            //                                Microsoft.Xna.Framework.Graphics.SamplerState.PointClamp,
+            //                                DepthStencilState.None,
+            //                                RasterizerState.CullNone);
+            //SpriteBatch.Draw(pixel, rect, Color.White);
+            //SpriteBatch.End();
+
+            GraphicsDevice.SetRenderTarget(null);
+        }
+
+
+
+
+
+
 
         protected override void Initialize()
         {
