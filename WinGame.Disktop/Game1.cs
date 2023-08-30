@@ -15,6 +15,7 @@ namespace WinGame.Disktop
 
     // http://vodacek.zvb.cz/archiv/604.html
     // https://github.com/z2oh/C3.MonoGame.Primitives2D/blob/master/Primitives2D.cs
+    // https://github.com/Zintom/BitmapTextRenderer/blob/master/BitmapTextRenderer.cs
 
     public class Game1 : Game
     {
@@ -35,7 +36,34 @@ namespace WinGame.Disktop
             _graphics.PreferredBackBufferHeight = 600;
             _graphics.PreferMultiSampling = true;
             IsMouseVisible = true;
+
+
         }
+
+        private void  RenderBlock()
+        {
+
+            RenderTarget2D rt = new RenderTarget2D(GraphicsDevice, 200, 200);
+            Rectangle rect = new Rectangle(0, 0, 200, 200);
+            GraphicsDevice.SetRenderTarget(rt);
+            GraphicsDevice.Clear(Color.Blue);
+
+            //SpriteBatch.Begin(SpriteSortMode.Immediate,
+            //                                BlendState.AlphaBlend,
+            //                                Microsoft.Xna.Framework.Graphics.SamplerState.PointClamp,
+            //                                DepthStencilState.None,
+            //                                RasterizerState.CullNone);
+            //SpriteBatch.Draw(pixel, rect, Color.White);
+            //SpriteBatch.End();
+
+            GraphicsDevice.SetRenderTarget(null);
+        }
+
+
+
+
+
+
 
         protected override void Initialize()
         {
