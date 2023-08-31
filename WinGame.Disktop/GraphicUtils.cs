@@ -41,7 +41,7 @@ namespace WinGame.Disktop
                 graphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
                 graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
                 graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
+                graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
                 graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
                 //graphics.Clear(Color.Black);
                 var s = graphics.MeasureString(text, font, new PointF(), textformat);

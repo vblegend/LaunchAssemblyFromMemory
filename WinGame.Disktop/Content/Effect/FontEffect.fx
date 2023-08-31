@@ -23,11 +23,35 @@ struct VertexShaderOutput
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-	float4 color = tex2D(SpriteTextureSampler,input.TextureCoordinates);
-	color.r = color.r * input.Color.r;
-    color.g = color.g * input.Color.g;
-	color.b = color.b * input.Color.b;
-	return color;
+	//	float4 color = tex2D(SpriteTextureSampler,input.TextureCoordinates);
+	//	float4 clr;
+
+	//	clr.rgb = input.Color.rgb;
+	//	clr.a = color.a;
+	//	return clr;
+
+
+
+
+
+	//	float mask = tex2D(SpriteTextureSampler,input.TextureCoordinates).a;
+	//	float4 clr;
+	//	clr.rgb = input.Color.rgb;
+	//	if( mask < 0.2 )
+	//		discard;
+	//	else  
+	//		clr.a = 1.0;
+	//	// do some anti-aliasing
+	//	clr.a *= smoothstep(0, 1.00, mask);
+	//	return clr;
+
+
+
+
+	   
+	    float4 color = tex2D(SpriteTextureSampler,input.TextureCoordinates);
+	    color.rgb*= input.Color.rgb;
+	    return color;
 }
 
 technique SpriteDrawing

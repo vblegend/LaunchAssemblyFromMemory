@@ -6,6 +6,7 @@ using MonoGame.Extended.BitmapFonts;
 using MonoGame.Extended.ViewportAdapters;
 using System;
 using System.Diagnostics;
+using System.Threading;
 
 namespace WinGame.Disktop
 {
@@ -20,7 +21,6 @@ namespace WinGame.Disktop
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private Texture2D _iconTexture;
-        private VertexPositionColor[] _vertexPositionColors;
         private BasicEffect _basicEffect;
         private Texture2D _textTexture;
         private SimpleFps fps = new SimpleFps();
@@ -38,8 +38,19 @@ namespace WinGame.Disktop
             _graphics.PreferredBackBufferHeight = 1080;
             _graphics.PreferMultiSampling = true;
             IsMouseVisible = true;
+            Window.KeyDown += Window_KeyDown;
+            Window.KeyUp += Window_KeyUp;
 
+        }
 
+        private void Window_KeyUp(object sender, InputKeyEventArgs e)
+        {
+            Console.WriteLine($"{e.Key} up");
+        }
+
+        private void Window_KeyDown(object sender, InputKeyEventArgs e)
+        {
+            Console.WriteLine($"{e.Key} down");
         }
 
         private void RenderBlock()
@@ -83,38 +94,20 @@ namespace WinGame.Disktop
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             this._iconTexture = Content.Load<Texture2D>("Images/Icon");
             // TODO: use this.Content to load your game content here
-            _vertexPositionColors = new[]
-                {
-                    new VertexPositionColor(new Vector3(100, 100, 0), Color.Red),
-                    new VertexPositionColor(new Vector3(200, 100, 0), Color.Lavender),
-                    new VertexPositionColor(new Vector3(200, 200, 0), Color.Yellow),
-                    new VertexPositionColor(new Vector3(200, 200, 0), Color.Gold),
-                    new VertexPositionColor(new Vector3(100, 200, 0), Color.Green),
-                    new VertexPositionColor(new Vector3(100, 100, 0), Color.Blue),
-               };
-
             _fontEffect = Content.Load<Effect>("Effect/FontEffect");
-
-
             _basicEffect = new BasicEffect(GraphicsDevice);
             _basicEffect.VertexColorEnabled = true;
 
 
             _font = Content.Load<SpriteFont>("File");
 
-            GraphicUtils.Test();
-
-
             Stopwatch sw = Stopwatch.StartNew();
-
             for (int i = 0; i < 100; i++)
             {
                 _textTexture = GraphicUtils.BuildString(GraphicsDevice, "56%", new System.Drawing.Font("Microsoft YaHei", 14));
                 _textTexture = GraphicUtils.BuildString(GraphicsDevice, "35%", new System.Drawing.Font("Microsoft YaHei", 14));
 
             }
-
-
             sw.Stop();
 
             Console.WriteLine(sw.ElapsedMilliseconds);
@@ -135,7 +128,7 @@ namespace WinGame.Disktop
                 _graphics.PreferredBackBufferWidth = 1920;
                 _graphics.PreferredBackBufferHeight = 1080;
                 _graphics.ApplyChanges();
-
+                Thread.Sleep(100);
             }
 
             // TODO: Add your update logic here
@@ -157,35 +150,39 @@ namespace WinGame.Disktop
             GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
-            this.DrawMarkRect(new Rectangle(200, 200, 100, 100), value, new Color(255, 0, 0, 80));
+
             this.Fill(new Rectangle(100, 300, 100, 100), new Color(255, 0, 0, 80));
             //_guiSystem.Draw(gameTime);
-            _spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, _fontEffect);
+            _spriteBatch.Begin( blendState: BlendState.NonPremultiplied);
             //_spriteBatch.Draw(this._iconTexture, new Rectangle(0, 0, 64, 64), Color.White);
             Primitives2D.DrawLine(_spriteBatch, new Vector2(100, 100), new Vector2(200, 300), Color.Red, 5.0f);
-
-
             _spriteBatch.Draw(_textTexture, new Rectangle(200, 300, _textTexture.Width, _textTexture.Height), Color.Blue); //...and draw it!
+            var texture = GraphicUtils.BuildString(GraphicsDevice, $"{Math.Round(value / 360 * 100)}%", new System.Drawing.Font("Microsoft YaHei", 14));
 
-
-
-            var texture = GraphicUtils.BuildString(GraphicsDevice,
-                $"{Math.Round(value / 360 * 100)}%", new System.Drawing.Font("Microsoft YaHei", 12));
-
-            _spriteBatch.Draw(texture, new Rectangle(230, 240, texture.Width, texture.Height), Color.WhiteSmoke);
-
-
-
-
-            fps.DrawFps(_spriteBatch, _font, new Vector2(10f, 10f), Color.White);
-
-
-
-
-
+            _spriteBatch.Draw(texture, new Rectangle(230, 240, texture.Width, texture.Height), Color.White);
 
             _spriteBatch.End();
 
+
+            _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
+
+            for (int i = 0; i < 9999; i++)
+            {
+                _spriteBatch.Draw(texture, new Rectangle(230, 240, texture.Width, texture.Height), Color.White);
+            }
+
+            _spriteBatch.End();
+
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+
+            this.DrawMarkRect(new Rectangle(200, 200, 100, 100), value, new Color(255, 0, 0, 80));
+
+            _spriteBatch.End();
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+
+            fps.DrawFps(_spriteBatch, _font, new Vector2(10f, 10f), Color.White);
+
+            _spriteBatch.End();
 
             texture.Dispose();
             //GraphicsDevice.RasterizerState = RasterizerState.CullNone;
