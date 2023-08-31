@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.BitmapFonts;
 using MonoGame.Extended.ViewportAdapters;
-
 using System;
 using System.Diagnostics;
 
@@ -26,13 +25,17 @@ namespace WinGame.Disktop
         private Texture2D _textTexture;
         private SimpleFps fps = new SimpleFps();
         private SpriteFont _font;
+
+        private Effect _fontEffect;
+
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             _graphics.IsFullScreen = false;
-            _graphics.PreferredBackBufferWidth = 800;
-            _graphics.PreferredBackBufferHeight = 600;
+            _graphics.PreferredBackBufferWidth = 1920;
+            _graphics.PreferredBackBufferHeight = 1080;
             _graphics.PreferMultiSampling = true;
             IsMouseVisible = true;
 
@@ -67,7 +70,7 @@ namespace WinGame.Disktop
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            this.TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d);
+           // this.TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d);
             this.IsFixedTimeStep = false;
             _graphics.SynchronizeWithVerticalRetrace = false;
             _graphics.ApplyChanges();
@@ -89,9 +92,13 @@ namespace WinGame.Disktop
                     new VertexPositionColor(new Vector3(100, 200, 0), Color.Green),
                     new VertexPositionColor(new Vector3(100, 100, 0), Color.Blue),
                };
+
+            _fontEffect = Content.Load<Effect>("Effect/FontEffect");
+
+
             _basicEffect = new BasicEffect(GraphicsDevice);
             _basicEffect.VertexColorEnabled = true;
-            _basicEffect.World = Matrix.CreateOrthographicOffCenter(0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 0, 0, 1);
+     
 
             _font = Content.Load<SpriteFont>("File");
   
@@ -102,8 +109,8 @@ namespace WinGame.Disktop
           
             for (int i = 0; i < 100; i++)
             {
-                _textTexture = GraphicUtils.BuildString(GraphicsDevice, "56%", new System.Drawing.Font("Microsoft YaHei", 12));
-                _textTexture = GraphicUtils.BuildString(GraphicsDevice, "35%", new System.Drawing.Font("Microsoft YaHei", 12));
+                _textTexture = GraphicUtils.BuildString(GraphicsDevice, "56%", new System.Drawing.Font("Microsoft YaHei", 14));
+                _textTexture = GraphicUtils.BuildString(GraphicsDevice, "35%", new System.Drawing.Font("Microsoft YaHei", 14));
 
             }
 
@@ -114,10 +121,22 @@ namespace WinGame.Disktop
         }
 
 
+
+
+
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            if (Keyboard.GetState().IsKeyDown(Keys.RightShift) && Keyboard.GetState().IsKeyDown(Keys.F12))
+            {
+                _graphics.IsFullScreen = !_graphics.IsFullScreen;
+                _graphics.PreferredBackBufferWidth = 1920;
+                _graphics.PreferredBackBufferHeight = 1080;
+                _graphics.ApplyChanges();
+
+            }
 
             // TODO: Add your update logic here
             value -= 0.01;
@@ -141,8 +160,8 @@ namespace WinGame.Disktop
             this.DrawMarkRect(new Rectangle(200, 200, 100, 100), value, new Color(255, 0, 0, 80));
             this.Fill(new Rectangle(100, 300, 100, 100), new Color(255, 0, 0, 80));
             //_guiSystem.Draw(gameTime);
-            _spriteBatch.Begin();
-            _spriteBatch.Draw(this._iconTexture, new Rectangle(0, 0, 64, 64), Color.White);
+            _spriteBatch.Begin( SpriteSortMode.Deferred,null,null, null, null, _fontEffect);
+            //_spriteBatch.Draw(this._iconTexture, new Rectangle(0, 0, 64, 64), Color.White);
             Primitives2D.DrawLine(_spriteBatch, new Vector2(100, 100), new Vector2(200, 300), Color.Red, 5.0f);
 
 
@@ -150,14 +169,15 @@ namespace WinGame.Disktop
 
 
 
-            var texture = GraphicUtils.BuildString(GraphicsDevice, $"{Math.Round(value / 360 * 100)}%", new System.Drawing.Font("Microsoft YaHei", 14));
+            var texture = GraphicUtils.BuildString(GraphicsDevice, 
+                $"{Math.Round(value / 360 * 100)}%", new System.Drawing.Font("Microsoft YaHei", 12));
 
-            _spriteBatch.Draw(texture, new Rectangle(230, 240, texture.Width, texture.Height), Color.White);
+            _spriteBatch.Draw(texture, new Rectangle(230, 240, texture.Width, texture.Height), Color.WhiteSmoke);
 
 
 
 
-            fps.DrawFps(_spriteBatch, _font, new Vector2(10f, 10f), Color.MonoGameOrange);
+            fps.DrawFps(_spriteBatch, _font, new Vector2(10f, 10f), Color.White);
 
 
 
@@ -315,6 +335,7 @@ namespace WinGame.Disktop
             }
             vbData[nTriangles * 3 - 3].Position.X = Cx + vResult.Position.X;
             vbData[nTriangles * 3 - 3].Position.Y = Cy + vResult.Position.Y;
+            _basicEffect.World = Matrix.CreateOrthographicOffCenter(0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 0, 0, 1);
             _basicEffect.CurrentTechnique.Passes[0].Apply();
             GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, vbData, 0, nTriangles);
 
