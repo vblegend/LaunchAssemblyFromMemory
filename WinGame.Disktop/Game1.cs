@@ -70,7 +70,7 @@ namespace WinGame.Disktop
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-           // this.TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d);
+            // this.TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d);
             this.IsFixedTimeStep = false;
             _graphics.SynchronizeWithVerticalRetrace = false;
             _graphics.ApplyChanges();
@@ -98,15 +98,15 @@ namespace WinGame.Disktop
 
             _basicEffect = new BasicEffect(GraphicsDevice);
             _basicEffect.VertexColorEnabled = true;
-     
+
 
             _font = Content.Load<SpriteFont>("File");
-  
+
             GraphicUtils.Test();
 
 
             Stopwatch sw = Stopwatch.StartNew();
-          
+
             for (int i = 0; i < 100; i++)
             {
                 _textTexture = GraphicUtils.BuildString(GraphicsDevice, "56%", new System.Drawing.Font("Microsoft YaHei", 14));
@@ -160,7 +160,7 @@ namespace WinGame.Disktop
             this.DrawMarkRect(new Rectangle(200, 200, 100, 100), value, new Color(255, 0, 0, 80));
             this.Fill(new Rectangle(100, 300, 100, 100), new Color(255, 0, 0, 80));
             //_guiSystem.Draw(gameTime);
-            _spriteBatch.Begin( SpriteSortMode.Deferred,null,null, null, null, _fontEffect);
+            _spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, _fontEffect);
             //_spriteBatch.Draw(this._iconTexture, new Rectangle(0, 0, 64, 64), Color.White);
             Primitives2D.DrawLine(_spriteBatch, new Vector2(100, 100), new Vector2(200, 300), Color.Red, 5.0f);
 
@@ -169,7 +169,7 @@ namespace WinGame.Disktop
 
 
 
-            var texture = GraphicUtils.BuildString(GraphicsDevice, 
+            var texture = GraphicUtils.BuildString(GraphicsDevice,
                 $"{Math.Round(value / 360 * 100)}%", new System.Drawing.Font("Microsoft YaHei", 12));
 
             _spriteBatch.Draw(texture, new Rectangle(230, 240, texture.Width, texture.Height), Color.WhiteSmoke);
