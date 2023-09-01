@@ -1,9 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended;
-using MonoGame.Extended.BitmapFonts;
-using MonoGame.Extended.ViewportAdapters;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -125,8 +122,8 @@ namespace WinGame.Disktop
             if (Keyboard.GetState().IsKeyDown(Keys.RightShift) && Keyboard.GetState().IsKeyDown(Keys.F12))
             {
                 _graphics.IsFullScreen = !_graphics.IsFullScreen;
-                _graphics.PreferredBackBufferWidth = 1920;
-                _graphics.PreferredBackBufferHeight = 1080;
+                _graphics.PreferredBackBufferWidth = 1440;
+                _graphics.PreferredBackBufferHeight = 900;
                 _graphics.ApplyChanges();
                 Thread.Sleep(100);
             }
