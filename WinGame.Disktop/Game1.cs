@@ -31,8 +31,8 @@ namespace WinGame.Disktop
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             _graphics.IsFullScreen = false;
-            _graphics.PreferredBackBufferWidth = 1920;
-            _graphics.PreferredBackBufferHeight = 1080;
+            _graphics.PreferredBackBufferWidth = 1440;
+            _graphics.PreferredBackBufferHeight = 900;
             _graphics.PreferMultiSampling = true;
             IsMouseVisible = true;
             Window.KeyDown += Window_KeyDown;
@@ -157,7 +157,6 @@ namespace WinGame.Disktop
             var texture = GraphicUtils.BuildString(GraphicsDevice, $"{Math.Round(value / 360 * 100)}%", new System.Drawing.Font("Microsoft YaHei", 14));
 
             _spriteBatch.Draw(texture, new Rectangle(230, 240, texture.Width, texture.Height), Color.White);
-
             _spriteBatch.End();
 
 
@@ -170,11 +169,15 @@ namespace WinGame.Disktop
 
             _spriteBatch.End();
 
+
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+
+            _spriteBatch.End();
 
             this.DrawMarkRect(new Rectangle(200, 200, 100, 100), value, new Color(255, 0, 0, 80));
 
-            _spriteBatch.End();
+
+
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
             fps.DrawFps(_spriteBatch, _font, new Vector2(10f, 10f), Color.White);
