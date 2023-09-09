@@ -162,10 +162,7 @@ namespace WinGame.Disktop
 
             _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
 
-            for (int i = 0; i < 9999; i++)
-            {
-                _spriteBatch.Draw(texture, new Rectangle(230, 240, texture.Width, texture.Height), Color.White);
-            }
+            _spriteBatch.Draw(texture, new Rectangle(230, 240, texture.Width, texture.Height), Color.White);
 
             _spriteBatch.End();
 
