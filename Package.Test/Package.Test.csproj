@@ -8,4 +8,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Resource.Package.Assets\Resource.Package.Assets.csproj" />
+  </ItemGroup>
+
 </Project>

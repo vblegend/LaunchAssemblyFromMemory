@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestWinForms", "TestWinForm
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinGame.Disktop", "WinGame.Disktop\WinGame.Disktop.csproj", "{EA6C718B-58A3-480D-8D2A-CAF2F0547B51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Package.Test", "Package.Test\Package.Test.csproj", "{930D1203-CC67-4F98-BC2C-2C52669BFE89}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Package.Test", "Package.Test\Package.Test.csproj", "{930D1203-CC67-4F98-BC2C-2C52669BFE89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resource.Package.Assets", "Resource.Package.Assets\Resource.Package.Assets.csproj", "{B2C5F793-3316-4A58-AB8B-22BA27FB88D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +63,14 @@ Global
 		{930D1203-CC67-4F98-BC2C-2C52669BFE89}.Release|Any CPU.Build.0 = Release|Any CPU
 		{930D1203-CC67-4F98-BC2C-2C52669BFE89}.Release|x64.ActiveCfg = Release|Any CPU
 		{930D1203-CC67-4F98-BC2C-2C52669BFE89}.Release|x64.Build.0 = Release|Any CPU
+		{B2C5F793-3316-4A58-AB8B-22BA27FB88D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2C5F793-3316-4A58-AB8B-22BA27FB88D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2C5F793-3316-4A58-AB8B-22BA27FB88D4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B2C5F793-3316-4A58-AB8B-22BA27FB88D4}.Debug|x64.Build.0 = Debug|Any CPU
+		{B2C5F793-3316-4A58-AB8B-22BA27FB88D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2C5F793-3316-4A58-AB8B-22BA27FB88D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2C5F793-3316-4A58-AB8B-22BA27FB88D4}.Release|x64.ActiveCfg = Release|Any CPU
+		{B2C5F793-3316-4A58-AB8B-22BA27FB88D4}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
