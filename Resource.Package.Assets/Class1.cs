@@ -1,17 +1,4 @@
-﻿using Org.BouncyCastle.Asn1.Pkcs;
-using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Encodings;
-using Org.BouncyCastle.Crypto.Engines;
-using Org.BouncyCastle.Crypto.Generators;
-using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.OpenSsl;
-using Org.BouncyCastle.Security;
-using Resource.Package.Assets.Secure;
-using System.Security.Cryptography;
-using System.Text;
-using static System.Net.Mime.MediaTypeNames;
-using System.Net.Http.Headers;
+﻿
 
 namespace Resource.Package.Assets
 {
@@ -23,41 +10,36 @@ namespace Resource.Package.Assets
 
         public static void Test()
         {
-            // KeyGenerater.Generate(Environment.CurrentDirectory);
+
+
+            AssetFileStream.Create("12345.asset", "123");
+
+
+            var data = File.ReadAllBytes(@"G:\热血传奇\Data\progress.bmp");
+
+
+
+            var file = AssetFileStream.Open2("12345.asset", "123");
 
 
 
 
 
 
-            var data = new Byte[100000];
-
-            Random rnd = new Random();
-            rnd.NextBytes(data);
-
-
-            //var publicKey = File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory, "assets.key"));
-            //var privateKey = File.ReadAllBytes(Path.Combine(Environment.CurrentDirectory, "package.key"));
-
-            //RSA rsa1 = RSA.Create();
-            //rsa1.ImportRSAPrivateKey(privateKey, out _);
-
-            var key = new byte[] { 40, 155 };
+            for (int i = 0; i < 5; i++)
+            {
+                file.Write(data);
+            }
 
 
-            var output = AES.Encrypt(data, key);
+            var node = file.Read(3);
 
+            Console.WriteLine(node);
 
-            var result = AES.Decrypt(output, key);
+            file.Close();
 
 
 
-
-
-
-
-
-            Console.WriteLine(result);
 
         }
 

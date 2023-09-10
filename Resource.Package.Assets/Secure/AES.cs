@@ -9,6 +9,7 @@ namespace Resource.Package.Assets.Secure
 
         private static Byte[] defaultKey = Encoding.UTF8.GetBytes("0123456789!@#$%^&*();:'\",<.>\\/ab");
 
+
         public static Byte[] Encrypt(Byte[] entData, Byte[] inputKey)
         {
             var key = inputKey.Concat(defaultKey).Take(32).ToArray();
