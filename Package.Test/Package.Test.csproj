@@ -12,4 +12,10 @@
     <ProjectReference Include="..\Resource.Package.Assets\Resource.Package.Assets.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="hum.asset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -18,8 +18,8 @@ namespace Package.Test
 
         private void opend_Click_1(object sender, EventArgs e)
         {
-            var file = AssetFileStream.Open2("12345.asset", "123");
-            var node = file.Read(10232);
+            var file = AssetFileStream.Open2("hum.asset", "123");
+            var node = file.Read(75);
             Console.WriteLine(node);
             File.WriteAllBytes(@"C:\Users\liuya\Desktop\123.bmp", node.Data);
             file.Close();
