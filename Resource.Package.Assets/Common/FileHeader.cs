@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Resource.Package.Assets.Common
 {
-    internal enum CompressionOption : Byte
+    public enum CompressionOption : Byte
     {
         /// <summary>
         /// 永远不会压缩
@@ -25,14 +25,6 @@ namespace Resource.Package.Assets.Common
     }
 
 
-    public struct DataBlock {
-
-        public Int32 OffsetX { get; set; }
-        public Int32 OffsetY { get; set; }
-
-        public Byte[] Data { get; set; }
-
-    }
 
 
 
@@ -55,6 +47,23 @@ namespace Resource.Package.Assets.Common
         public Int32 TableDataAddr { get; set; }
         public Int32 TableDataSize { get; set; }
 
+    }
+
+
+
+    internal class FileAsyncCache {
+        public FileInfomation infomation;
+        public Byte[] Data;
+
+
+    }
+
+
+    public struct DataBlock
+    {
+        public Int32 OffsetX { get; set; }
+        public Int32 OffsetY { get; set; }
+        public Byte[] Data { get; set; }
     }
 
     internal struct FileInfomation

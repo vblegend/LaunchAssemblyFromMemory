@@ -28,33 +28,58 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.opend = new System.Windows.Forms.Button();
-            this.SuspendLayout();
+            opend = new Button();
+            batch_import = new Button();
+            button1 = new Button();
+            SuspendLayout();
             // 
             // opend
             // 
-            this.opend.Location = new System.Drawing.Point(48, 54);
-            this.opend.Name = "opend";
-            this.opend.Size = new System.Drawing.Size(144, 40);
-            this.opend.TabIndex = 0;
-            this.opend.Text = "Open";
-            this.opend.UseVisualStyleBackColor = true;
-            this.opend.Click += new System.EventHandler(this.opend_Click_1);
+            opend.Location = new Point(48, 54);
+            opend.Name = "opend";
+            opend.Size = new Size(231, 99);
+            opend.TabIndex = 0;
+            opend.Text = "读取文件";
+            opend.UseVisualStyleBackColor = true;
+            opend.Click += opend_Click_1;
+            // 
+            // batch_import
+            // 
+            batch_import.Location = new Point(308, 54);
+            batch_import.Name = "batch_import";
+            batch_import.Size = new Size(163, 99);
+            batch_import.TabIndex = 1;
+            batch_import.Text = "批量导入";
+            batch_import.UseVisualStyleBackColor = true;
+            batch_import.Click += batch_import_Click;
+            // 
+            // button1
+            // 
+            button1.Location = new Point(308, 176);
+            button1.Name = "button1";
+            button1.Size = new Size(163, 99);
+            button1.TabIndex = 2;
+            button1.Text = "追加文件";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.opend);
-            this.Name = "Form1";
-            this.Text = "Form1";
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(800, 450);
+            Controls.Add(button1);
+            Controls.Add(batch_import);
+            Controls.Add(opend);
+            Name = "Form1";
+            Text = "Form1";
+            ResumeLayout(false);
         }
 
         #endregion
 
         private Button opend;
+        private Button batch_import;
+        private Button button1;
     }
 }

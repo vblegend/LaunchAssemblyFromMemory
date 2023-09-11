@@ -1,12 +1,14 @@
 ﻿using Resource.Package.Assets.Common;
 using Resource.Package.Assets.Secure;
 using System.IO.Compression;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading.Tasks;
 
 
 namespace Resource.Package.Assets
 {
-    internal class AssetFileStream
+    public class AssetFileStream
     {
         private static readonly UInt64 MAGIC = 1234567;
         private FileHeader header;
@@ -107,13 +109,67 @@ namespace Resource.Package.Assets
 
 
 
-        public Int32 Write(DataBlock data)
+
+
+
+        private async Task<FileAsyncCache> Preconditioning(DataBlock item)
+        {
+            var task = new FileAsyncCache();
+            task.infomation.OffsetX = item.OffsetX;
+            task.infomation.OffsetY = item.OffsetY;
+            task.infomation.lpRawSize = item.Data.Length;
+            if (header.CompressOption == CompressionOption.MuchPossibleCompress || header.CompressOption == CompressionOption.MustCompressed)
+            {
+                task.Data = await ZLib.Compress(item.Data);
+                if (task.Data.Length > task.infomation.lpRawSize && header.CompressOption == CompressionOption.MuchPossibleCompress)
+                {
+                    task.Data = item.Data;
+                }
+            }
+            else
+            {
+                task.Data = item.Data;
+            }
+            task.infomation.lpSize = task.Data.Length;
+            return task;
+        }
+
+
+        public Int32 BatchImport(IEnumerable<DataBlock> items)
+        {
+            var tasks = new List<Task<FileAsyncCache>>();
+            foreach (var item in items)
+            {
+                tasks.Add(Preconditioning(item));
+            }
+            Task.WaitAll(tasks.ToArray());
+            using (var writer = new BinaryWriter(fileStream, Encoding.UTF8, true))
+            {
+                foreach (var task in tasks)
+                {
+                    var cache = task.Result;
+                    cache.infomation.lpData = header.TableDataAddr;
+                    header.TableDataAddr = cache.infomation.lpData + cache.infomation.lpSize;
+                    header.NumberOfFiles++;
+                    writer.Seek(cache.infomation.lpData, SeekOrigin.Begin);
+                    writer.Write(cache.Data);
+                    this.Infomations.Add(cache.infomation);
+                }
+                this.WriteIndex(writer);
+                return header.NumberOfFiles;
+            }
+        }
+
+
+
+
+        public Int32 Import(DataBlock data)
         {
             var info = new FileInfomation();
             Byte[] outData = data.Data;
             if (header.CompressOption == CompressionOption.MuchPossibleCompress || header.CompressOption == CompressionOption.MustCompressed)
             {
-                outData = ZLib.Compress(data.Data);
+                outData = ZLib.Compress(data.Data).Result;
                 if (outData.Length > data.Data.Length && header.CompressOption == CompressionOption.MuchPossibleCompress)
                 {
                     outData = data.Data;
@@ -123,8 +179,14 @@ namespace Resource.Package.Assets
             info.OffsetY = data.OffsetY;
             info.lpSize = outData.Length;
             info.lpRawSize = data.Data.Length;
-            return this.Write(info,outData);
+            return this.Import(info, outData);
         }
+
+
+        //private FileInfomation Apply(DataBlock data)
+        //{
+
+        //}
 
 
 
@@ -143,9 +205,26 @@ namespace Resource.Package.Assets
             }
         }
 
+
+
+        private Int32 Import(FileInfomation info, Byte[] data)
+        {
+            this.Infomations.Add(info);
+            info.lpData = header.TableDataAddr;
+            header.TableDataAddr = info.lpData + info.lpSize;
+            var number = header.NumberOfFiles++;
+            using (var writer = new BinaryWriter(fileStream, Encoding.UTF8, true))
+            {
+                writer.Seek(info.lpData, SeekOrigin.Begin);
+                writer.Write(data);
+                this.WriteIndex(writer);
+                return number;
+            }
+        }
+
         public Int32 Write(Byte[] data)
         {
-            return this.Write(new DataBlock() { Data = data });
+            return this.Import(new DataBlock() { Data = data });
         }
 
         public void Close()
@@ -181,7 +260,7 @@ namespace Resource.Package.Assets
                         info.OffsetX = msReader.ReadInt32();
                         info.OffsetY = msReader.ReadInt32();
                         info.lpSize = msReader.ReadInt32();
-                        info.lpRawSize = msReader.ReadByte();
+                        info.lpRawSize = msReader.ReadInt32();
                         info.lpData = msReader.ReadInt32();
                         this.Infomations.Add(info);
                     }

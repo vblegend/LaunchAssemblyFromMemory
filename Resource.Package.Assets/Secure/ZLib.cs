@@ -11,7 +11,7 @@ namespace Resource.Package.Assets.Secure
     {
 
 
-        public static Byte[] Compress(Byte[] data)
+        public static async Task<Byte[]> Compress(Byte[] data)
         {
             using (var ms = new MemoryStream())
             {
