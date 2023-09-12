@@ -1,5 +1,6 @@
 ﻿using Resource.Package.Assets.Common;
 using Resource.Package.Assets.Secure;
+using System.Drawing;
 using System.IO.Compression;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
@@ -154,6 +155,16 @@ namespace Resource.Package.Assets
 
 
 
+        public void UpdateOffset(Int32 index, Point data)
+        {
+            var info = this.Infomations[index];
+            info.OffsetX += data.X;
+            info.OffsetY += data.Y;
+            using (var writer = new BinaryWriter(fileStream, Encoding.UTF8, true))
+            {
+                this.WriteIndex(writer);
+            }
+        }
 
 
 
