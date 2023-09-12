@@ -1,6 +1,7 @@
 ﻿using Resource.Package.Assets.Common;
 using Resource.Package.Assets.Secure;
 using System.IO.Compression;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Resource.Package.Assets
 {
-    public class AssetFileStream
+    public class AssetFileStream : IDisposable
     {
         private static Byte[] defaultKey = Encoding.UTF8.GetBytes("!1a@2b#3c$4d%5e^6f&7g*8h(9i)0j.+");
         private static readonly UInt64 MAGIC = 8319385958189441315; // #!Assets
@@ -17,7 +18,7 @@ namespace Resource.Package.Assets
         private List<FileInfomation> Infomations = new List<FileInfomation>();
         private FileStream fileStream;
 
-        public static void Create(String filename, String password, CompressionOption compressionOption = CompressionOption.NeverCompress)
+        public static AssetFileStream Create(String filename, String password, CompressionOption compressionOption = CompressionOption.NeverCompress)
         {
             var pwd = BuildPassword(password);
             var meta = new FileHeader();
@@ -43,6 +44,7 @@ namespace Resource.Package.Assets
                     writer.Write(tab.Length);
                 }
             };
+            return Open(filename, password);
         }
 
 
@@ -57,7 +59,10 @@ namespace Resource.Package.Assets
         public void ChangePassword(String password)
         {
             this.password = BuildPassword(password);
-            this.Save();
+            using (var writer = new BinaryWriter(fileStream, Encoding.UTF8, true))
+            {
+                this.WriteIndex(writer);
+            }
         }
 
 
@@ -232,36 +237,17 @@ namespace Resource.Package.Assets
         }
 
 
-
-        private Int32 Write(FileInfomation info, Byte[] data)
-        {
-            this.Infomations.Add(info);
-            info.lpData = header.TableDataAddr;
-            header.TableDataAddr = info.lpData + info.lpSize;
-            var number = header.NumberOfFiles++;
-            using (var writer = new BinaryWriter(fileStream, Encoding.UTF8, true))
-            {
-                writer.Seek(info.lpData, SeekOrigin.Begin);
-                writer.Write(data);
-                this.WriteIndex(writer);
-                return number;
-            }
-        }
-
-
-
         private Int32 Import(FileInfomation info, Byte[] data)
         {
             this.Infomations.Add(info);
-            info.lpData = header.TableDataAddr;
-            header.TableDataAddr = info.lpData + info.lpSize;
-            var number = header.NumberOfFiles++;
+            info.lpData = Apply(info.lpSize);
+            header.NumberOfFiles++;
             using (var writer = new BinaryWriter(fileStream, Encoding.UTF8, true))
             {
                 writer.Seek(info.lpData, SeekOrigin.Begin);
                 writer.Write(data);
                 this.WriteIndex(writer);
-                return number;
+                return header.NumberOfFiles - 1;
             }
         }
 
@@ -272,11 +258,20 @@ namespace Resource.Package.Assets
 
         public void Close()
         {
-            fileStream.Close();
-            fileStream.Dispose();
+            if (fileStream != null)
+            {
+                fileStream.Close();
+                fileStream.Dispose();
+                fileStream = null;
+                this.Infomations = null;
+                this.password = null;
+            }
         }
 
-
+        public void Dispose()
+        {
+            this.Close();
+        }
         private void ReadIndex(BinaryReader reader)
         {
             Byte[] raw;
@@ -312,14 +307,7 @@ namespace Resource.Package.Assets
         }
 
 
-        public void Save()
-        {
-            using (var writer = new BinaryWriter(fileStream, Encoding.UTF8, true))
-            {
-                this.WriteIndex(writer);
-            }
-        }
-
+ 
 
 
 
@@ -348,14 +336,6 @@ namespace Resource.Package.Assets
                 writer.Write(tab);
             }
         }
-
-
-
-
-
-
-
-
 
 
     }

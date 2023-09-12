@@ -36,7 +36,6 @@ namespace Package.Test
 
         private void batch_import_Click_1(object sender, EventArgs e)
         {
-            AssetFileStream.Create("12345.asset", "123", CompressionOption.MustCompressed);
             var dirname = @"C:\Users\liuya\Desktop\000\";
             List<DataBlock> blocks = new List<DataBlock>();
             var files = Directory.EnumerateFiles(dirname, "*.bmp", SearchOption.AllDirectories);
@@ -53,9 +52,10 @@ namespace Package.Test
             }
 
             var sw = Stopwatch.StartNew();
-            var file = AssetFileStream.Open("12345.asset", "123");
-            file.BatchImport(blocks);
-            file.Close();
+            using (var  file = AssetFileStream.Create("12345.asset", "123", CompressionOption.MustCompressed))
+            {
+                file.BatchImport(blocks);
+            }
             sw.Stop();
             MessageBox.Show($"”√ ±{sw.ElapsedMilliseconds}ms");
 
@@ -76,7 +76,7 @@ namespace Package.Test
         {
             var file = AssetFileStream.Open("hum.asset", "123");
 
-            file.Save();
+            file.ChangePassword("");
 
             file.Close();
 
