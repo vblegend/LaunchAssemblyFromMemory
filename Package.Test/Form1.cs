@@ -1,6 +1,7 @@
 using Resource.Package.Assets;
 using Resource.Package.Assets.Common;
 using System.Diagnostics;
+using System.Text;
 
 namespace Package.Test
 {
@@ -11,22 +12,29 @@ namespace Package.Test
             InitializeComponent();
         }
 
-        private void opend_Click(object sender, EventArgs e)
+ 
+        private void button2_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void opend_Click_1(object sender, EventArgs e)
-        {
-            var file = AssetFileStream.Open2("hum.asset", "123");
-            var node = file.Read(75);
-            Console.WriteLine(node);
-            File.WriteAllBytes(@"C:\Users\liuya\Desktop\123.bmp", node.Data);
+            var file = AssetFileStream.Open("hum.asset", "123");
+            var block = new DataBlock();
+            block.OffsetX = 123;
+            block.OffsetY = -123;
+            block.Data = File.ReadAllBytes(@"E:\Pictures\texture.png");
+            file.Replace(7, block);
             file.Close();
-
         }
 
-        private void batch_import_Click(object sender, EventArgs e)
+        private void opend_Click_2(object sender, EventArgs e)
+        {
+            var file = AssetFileStream.Open("hum.asset", "123");
+            var node = file.Read(7);
+            File.WriteAllBytes("123.bmp", node.Data);
+            file.Close();
+        }
+
+
+
+        private void batch_import_Click_1(object sender, EventArgs e)
         {
             AssetFileStream.Create("12345.asset", "123", CompressionOption.MustCompressed);
             var dirname = @"C:\Users\liuya\Desktop\000\";
@@ -45,7 +53,7 @@ namespace Package.Test
             }
 
             var sw = Stopwatch.StartNew();
-            var file = AssetFileStream.Open2("12345.asset", "123");
+            var file = AssetFileStream.Open("12345.asset", "123");
             file.BatchImport(blocks);
             file.Close();
             sw.Stop();
@@ -53,15 +61,26 @@ namespace Package.Test
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void button1_Click_1(object sender, EventArgs e)
         {
-            var file = AssetFileStream.Open2("12345.asset", "123");
-            var data = File.ReadAllBytes(@"G:\ÈÈÑª´«Ææ\Data\progress.bmp");
+            var file = AssetFileStream.Open("12345.asset", "123");
+            var data = File.ReadAllBytes(@"G:\Data\progress.bmp");
             for (int i = 0; i < 5; i++)
             {
                 file.Write(data);
             }
             file.Close();
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            var file = AssetFileStream.Open("hum.asset", "123");
+
+            file.Save();
+
+            file.Close();
+
+        }
+
     }
 }

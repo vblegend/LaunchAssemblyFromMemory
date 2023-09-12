@@ -10,17 +10,16 @@ namespace Resource.Package.Assets
 {
     public class AssetFileStream
     {
-        private static readonly UInt64 MAGIC = 1234567;
+        private static Byte[] defaultKey = Encoding.UTF8.GetBytes("!1a@2b#3c$4d%5e^6f&7g*8h(9i)0j.+");
+        private static readonly UInt64 MAGIC = 8319385958189441315; // #!Assets
         private FileHeader header;
         private Byte[] password;
         private List<FileInfomation> Infomations = new List<FileInfomation>();
         private FileStream fileStream;
 
-
         public static void Create(String filename, String password, CompressionOption compressionOption = CompressionOption.NeverCompress)
         {
-            var pwd = Encoding.UTF8.GetBytes(password);
-
+            var pwd = BuildPassword(password);
             var meta = new FileHeader();
             meta.CompressOption = compressionOption;
             meta.Magic = MAGIC;
@@ -47,19 +46,32 @@ namespace Resource.Package.Assets
         }
 
 
-        public static AssetFileStream Open2(String filename, String password)
+        public static AssetFileStream Open(String filename, String password)
         {
             var stream = new AssetFileStream();
-            stream.Open(filename, password);
+            stream.OpenFile(filename, password);
             return stream;
         }
 
 
 
-        public void Open(String filename, String password)
+        private static Byte[] BuildPassword(String password)
+        {
+            if (String.IsNullOrEmpty(password))
+            {
+                return defaultKey;
+            }
+            var originKey = Encoding.UTF8.GetBytes(password);
+            var keys = originKey.Concat(defaultKey);
+            return keys.Take(32).ToArray();
+        }
+
+
+
+        public void OpenFile(String filename, String password)
         {
             header.Version = new byte[3];
-            this.password = Encoding.UTF8.GetBytes(password);
+            this.password = BuildPassword(password);
             this.fileStream = File.Open(filename, FileMode.Open);
             using (var reader = new BinaryReader(fileStream, Encoding.UTF8, true))
             {
@@ -79,10 +91,10 @@ namespace Resource.Package.Assets
 
 
 
-        public DataBlock Read(Int32 Index)
+        public DataBlock Read(Int32 index)
         {
 
-            var info = this.Infomations[Index];
+            var info = this.Infomations[index];
             using (var reader = new BinaryReader(fileStream, Encoding.UTF8, true))
             {
                 var node = new DataBlock();
@@ -103,7 +115,29 @@ namespace Resource.Package.Assets
 
         public void Replace(Int32 index, DataBlock data)
         {
-
+            var info = this.Infomations[index];
+            var task = Preconditioning(data).Result;
+            using (var writer = new BinaryWriter(fileStream, Encoding.UTF8, true))
+            {
+                info.OffsetX = task.infomation.OffsetX;
+                info.OffsetY = task.infomation.OffsetY;
+                info.lpRawSize = task.infomation.lpRawSize;
+                if (info.lpSize >= task.infomation.lpSize)
+                {
+                    info.lpSize = task.infomation.lpSize;
+                    writer.Seek(info.lpData, SeekOrigin.Begin);
+                    writer.Write(task.Data);
+                }
+                else
+                {
+                    var addr = Apply(task.Data.Length);
+                    info.lpData = addr;
+                    info.lpSize = task.infomation.lpSize;
+                    writer.Seek(info.lpData, SeekOrigin.Begin);
+                    writer.Write(task.Data);
+                }
+                this.WriteIndex(writer);
+            }
         }
 
 
@@ -183,10 +217,12 @@ namespace Resource.Package.Assets
         }
 
 
-        //private FileInfomation Apply(DataBlock data)
-        //{
-
-        //}
+        private Int32 Apply(Int32 size)
+        {
+            var addr = header.TableDataAddr;
+            header.TableDataAddr = addr + size;
+            return addr;
+        }
 
 
 
@@ -269,7 +305,13 @@ namespace Resource.Package.Assets
         }
 
 
-
+        public void Save()
+        {
+            using (var writer = new BinaryWriter(fileStream, Encoding.UTF8, true))
+            {
+                this.WriteIndex(writer);
+            }
+        }
 
 
 

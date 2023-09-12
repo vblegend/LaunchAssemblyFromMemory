@@ -7,12 +7,11 @@ namespace Resource.Package.Assets.Secure
     internal static class AES
     {
 
-        private static Byte[] defaultKey = Encoding.UTF8.GetBytes("0123456789!@#$%^&*();:'\",<.>\\/ab");
 
 
         public static Byte[] Encrypt(Byte[] entData, Byte[] inputKey)
         {
-            var key = inputKey.Concat(defaultKey).Take(32).ToArray();
+            var key = inputKey;
             using (var aesAlg = Aes.Create())
             {
                 using (var encryptor = aesAlg.CreateEncryptor(key, aesAlg.IV))
@@ -33,7 +32,7 @@ namespace Resource.Package.Assets.Secure
 
         public static Byte[] Decrypt(Byte[] fullCipher, Byte[] inputKey)
         {
-            var key = inputKey.Concat(defaultKey).Take(32).ToArray();
+            var key = inputKey;
             var worldSpan = fullCipher.AsSpan();
             var iv = worldSpan.Slice(start: 0, length: 16);
             var cipher = worldSpan.Slice(start: 16);

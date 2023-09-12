@@ -52,6 +52,10 @@ namespace Resource.Package.Assets.Common
 
 
     internal class FileAsyncCache {
+        public FileAsyncCache()
+        {
+            infomation = new FileInfomation();
+        }
         public FileInfomation infomation;
         public Byte[] Data;
 
@@ -66,7 +70,7 @@ namespace Resource.Package.Assets.Common
         public Byte[] Data { get; set; }
     }
 
-    internal struct FileInfomation
+    internal class FileInfomation
     {
 
         /// <summary>
