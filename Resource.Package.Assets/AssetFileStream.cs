@@ -54,6 +54,14 @@ namespace Resource.Package.Assets
         }
 
 
+        public void ChangePassword(String password)
+        {
+            this.password = BuildPassword(password);
+            this.Save();
+        }
+
+
+
 
         private static Byte[] BuildPassword(String password)
         {
@@ -93,7 +101,6 @@ namespace Resource.Package.Assets
 
         public DataBlock Read(Int32 index)
         {
-
             var info = this.Infomations[index];
             using (var reader = new BinaryReader(fileStream, Encoding.UTF8, true))
             {
