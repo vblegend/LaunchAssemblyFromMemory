@@ -168,6 +168,20 @@ namespace Resource.Package.Assets
 
 
 
+        public void UpdateOffsets(Dictionary<Int32, Point> datas)
+        {
+            foreach (var item in datas)
+            {
+                var info = this.Infomations[item.Key];
+                info.OffsetX += item.Value.X;
+                info.OffsetY += item.Value.Y;
+            }
+            using (var writer = new BinaryWriter(fileStream, Encoding.UTF8, true))
+            {
+                this.WriteIndex(writer);
+            }
+        }
+
 
         private async Task<FileAsyncCache> Preconditioning(DataBlock item)
         {
@@ -318,7 +332,7 @@ namespace Resource.Package.Assets
         }
 
 
- 
+
 
 
 
