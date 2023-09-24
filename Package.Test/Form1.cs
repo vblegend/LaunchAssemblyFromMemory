@@ -36,7 +36,7 @@ namespace Package.Test
 
         private void batch_import_Click_1(object sender, EventArgs e)
         {
-            var dirname = @"C:\Users\liuya\Desktop\000\";
+            var dirname = @"C:\Users\liuya\Desktop\111\";
             List<DataBlock> blocks = new List<DataBlock>();
             var files = Directory.EnumerateFiles(dirname, "*.bmp", SearchOption.AllDirectories);
             foreach (var item in files)
