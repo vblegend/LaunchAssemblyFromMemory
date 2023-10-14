@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SpriteFontPlus;
 
 namespace WinGame.Disktop
 {
@@ -24,10 +25,12 @@ namespace WinGame.Disktop
         public void Update(GameTime gameTime)
         {
             now = gameTime.TotalGameTime.TotalSeconds;
+
             elapsed = (double)(now - last);
             if (elapsed > msgFrequency)
             {
-                msg = " Fps: " + (frames / elapsed).ToString() + "\n Elapsed time: " + elapsed.ToString() + "\n Updates: " + updates.ToString() + "\n Frames: " + frames.ToString();
+
+                msg = " Fps: " + (frames / elapsed).ToString() + "\n Elapsed time: " + elapsed.ToString() + "\n 更新次数: " + updates.ToString() + "\n 渲染帧数: " + frames.ToString();
                 //Console.WriteLine(msg);
                 elapsed = 0;
                 frames = 0;
@@ -37,9 +40,21 @@ namespace WinGame.Disktop
             updates++;
         }
 
-        public void DrawFps(SpriteBatch spriteBatch, SpriteFont font, Vector2 fpsDisplayPosition, Color fpsTextColor)
+        public void DrawFps(SpriteBatch spriteBatch, DynamicSpriteFont font, Vector2 fpsDisplayPosition, Color fpsTextColor)
         {
-            spriteBatch.DrawString(font, msg, fpsDisplayPosition, fpsTextColor);
+            //spriteBatch.DrawString(font, msg, fpsDisplayPosition, fpsTextColor);
+
+            var lines = msg.Split('\n');
+
+            foreach (var line in lines)
+            {
+                spriteBatch.DrawString(font, line, fpsDisplayPosition, fpsTextColor);
+                fpsDisplayPosition.Y += font.Size;
+            }
+
+
+
+
             frames++;
         }
     }

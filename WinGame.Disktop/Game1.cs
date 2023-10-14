@@ -1,8 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SharpDX.DirectWrite;
+using SpriteFontPlus;
 using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 
 namespace WinGame.Disktop
@@ -22,7 +26,7 @@ namespace WinGame.Disktop
         private Texture2D _textTexture;
         private SimpleFps fps = new SimpleFps();
         private SpriteFont _font;
-
+        private DynamicSpriteFont font1;
         private Effect _fontEffect;
 
 
@@ -71,7 +75,19 @@ namespace WinGame.Disktop
 
 
 
+        public static byte[] GetManifestResourceStream(string resourceName)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var resNames = assembly.GetManifestResourceNames();
 
+            var actualResourceName = resNames.First(r => r.EndsWith(resourceName));
+
+            var stream = assembly.GetManifestResourceStream(actualResourceName);
+            byte[] ret = new byte[stream.Length];
+            stream.Read(ret, 0, (int)stream.Length);
+
+            return ret;
+        }
 
 
 
@@ -95,6 +111,9 @@ namespace WinGame.Disktop
             _basicEffect = new BasicEffect(GraphicsDevice);
             _basicEffect.VertexColorEnabled = true;
 
+
+
+            font1 = DynamicSpriteFont.FromTtf(GetManifestResourceStream("font.ttf"), 24);
 
             _font = Content.Load<SpriteFont>("File");
 
@@ -177,7 +196,7 @@ namespace WinGame.Disktop
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
-            fps.DrawFps(_spriteBatch, _font, new Vector2(10f, 10f), Color.White);
+            fps.DrawFps(_spriteBatch, font1, new Vector2(10f, 10f), Color.White);
 
             _spriteBatch.End();
 
