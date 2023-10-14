@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.IMEHelper;
 using SharpDX.DirectWrite;
 using SpriteFontPlus;
 using System;
@@ -28,8 +29,11 @@ namespace WinGame.Disktop
         private SpriteFont _font;
         private DynamicSpriteFont font1;
         private Effect _fontEffect;
-
-
+        private WinFormsIMEHandler imeHandler;
+        private Texture2D whitePixel;
+        private string inputContent = string.Empty;
+        const int UnicodeSimplifiedChineseMin = 0x4E00;
+        const int UnicodeSimplifiedChineseMax = 0x9FA5;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -99,6 +103,54 @@ namespace WinGame.Disktop
             _graphics.SynchronizeWithVerticalRetrace = false;
             _graphics.ApplyChanges();
 
+            whitePixel = new Texture2D(GraphicsDevice, 1, 1);
+            whitePixel.SetData<Color>(new Color[] { Color.White });
+
+            imeHandler = new WinFormsIMEHandler(this, false);
+
+            imeHandler.TextInput += (s, e) =>
+            {
+                switch ((int)e.Character)
+                {
+                    case 8:
+                        if (inputContent.Length > 0)
+                            inputContent = inputContent.Remove(inputContent.Length - 1, 1);
+                        break;
+                    case 27:
+                    case 13:
+                        inputContent = "";
+                        break;
+                    default:
+                        if (e.Character > UnicodeSimplifiedChineseMax)
+                        {
+                            inputContent += "?";
+                        }
+                        else
+                        {
+                            inputContent += e.Character;
+                        }
+                        break;
+                }
+            };
+
+            imeHandler.TextComposition += (o, e) =>
+            {
+                var rect = new Rectangle(10, 50, 0, 0);
+                imeHandler.SetTextInputRect(ref rect);
+                if (e.CandidateList == null)
+                {
+                    Trace.WriteLine($"{e.CompositedText}");
+                }
+                else
+                {
+                    Trace.WriteLine($"{e.CompositedText}{String.Join(' ', e.CandidateList?.Candidates)}");
+                }
+            };
+
+
+
+
+
             base.Initialize();
         }
 
@@ -130,8 +182,7 @@ namespace WinGame.Disktop
         }
 
 
-
-
+        private KeyboardState lastState;
 
         protected override void Update(GameTime gameTime)
         {
@@ -146,11 +197,18 @@ namespace WinGame.Disktop
                 _graphics.ApplyChanges();
                 Thread.Sleep(100);
             }
-
+            KeyboardState ks = Keyboard.GetState();
+            if (ks.IsKeyDown(Keys.F1) && lastState.IsKeyUp(Keys.F1))
+            {
+                if (imeHandler.Enabled)
+                    imeHandler.StopTextComposition();
+                else
+                    imeHandler.StartTextComposition();
+            }
             // TODO: Add your update logic here
             value -= 0.01;
             if (value < 0) value = 360;
-
+            lastState = ks;
             fps.Update(gameTime);
             base.Update(gameTime);
         }
@@ -169,13 +227,14 @@ namespace WinGame.Disktop
 
             this.Fill(new Rectangle(100, 300, 100, 100), new Color(255, 0, 0, 80));
             //_guiSystem.Draw(gameTime);
-            _spriteBatch.Begin( blendState: BlendState.NonPremultiplied);
+            _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
             //_spriteBatch.Draw(this._iconTexture, new Rectangle(0, 0, 64, 64), Color.White);
             Primitives2D.DrawLine(_spriteBatch, new Vector2(100, 100), new Vector2(200, 300), Color.Red, 5.0f);
             _spriteBatch.Draw(_textTexture, new Rectangle(200, 300, _textTexture.Width, _textTexture.Height), Color.Blue); //...and draw it!
             var texture = GraphicUtils.BuildString(GraphicsDevice, $"{Math.Round(value / 360 * 100)}%", new System.Drawing.Font("Microsoft YaHei", 14));
 
             _spriteBatch.Draw(texture, new Rectangle(230, 240, texture.Width, texture.Height), Color.White);
+            _spriteBatch.DrawString(font1, "按下 F1 启用 / 停用 IME", new Vector2(400, 10), Color.White);
             _spriteBatch.End();
 
 
@@ -197,7 +256,7 @@ namespace WinGame.Disktop
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
             fps.DrawFps(_spriteBatch, font1, new Vector2(10f, 10f), Color.White);
-
+            DrawIme();
             _spriteBatch.End();
 
             texture.Dispose();
@@ -230,6 +289,63 @@ namespace WinGame.Disktop
             base.Draw(gameTime);
         }
 
+
+        private void DrawIme()
+        {
+            const string DefaultChar = "?";
+            Vector2 len = font1.MeasureString(inputContent);
+            Vector2 drawPos = new Vector2(15 + len.X, 50);
+            Vector2 measStr = new Vector2(0, font1.MeasureString("|").Y);
+            Color compColor = Color.White;
+
+            if (imeHandler.CompositionCursorPos == 0)
+                _spriteBatch.Draw(whitePixel, new Rectangle((int)drawPos.X, (int)drawPos.Y, 1, (int)measStr.Y), Color.White);
+
+            for (int i = 0; i < imeHandler.Composition.Length; i++)
+            {
+                string val = imeHandler.Composition[i].ToString();
+                switch (imeHandler.GetCompositionAttr(i))
+                {
+                    case CompositionAttributes.Converted: compColor = Color.LightGreen; break;
+                    case CompositionAttributes.FixedConverted: compColor = Color.Gray; break;
+                    case CompositionAttributes.Input: compColor = Color.Orange; break;
+                    case CompositionAttributes.InputError: compColor = Color.Red; break;
+                    case CompositionAttributes.TargetConverted: compColor = Color.Yellow; break;
+                    case CompositionAttributes.TargetNotConverted: compColor = Color.SkyBlue; break;
+                }
+
+                if (val[0] > UnicodeSimplifiedChineseMax)
+                    val = DefaultChar;
+
+                _spriteBatch.DrawString(font1, val, drawPos, compColor);
+
+                measStr = font1.MeasureString(val);
+                drawPos += new Vector2(measStr.X, 0);
+
+                if ((i + 1) == imeHandler.CompositionCursorPos)
+                    _spriteBatch.Draw(whitePixel, new Rectangle((int)drawPos.X, (int)drawPos.Y, 1, (int)measStr.Y), Color.White);
+            }
+
+            for (uint i = imeHandler.CandidatesPageStart;
+                i < Math.Min(imeHandler.CandidatesPageStart + imeHandler.CandidatesPageSize, imeHandler.Candidates.Length);
+                i++)
+            {
+                if (imeHandler.Candidates[i][0] > UnicodeSimplifiedChineseMax)
+                    imeHandler.Candidates[i] = DefaultChar;
+
+                try
+                {
+                    _spriteBatch.DrawString(font1,
+                        String.Format("{0}.{1}", i + 1 - imeHandler.CandidatesPageStart, imeHandler.Candidates[i]),
+                        new Vector2(15 + len.X, 25 + 50 + (i - imeHandler.CandidatesPageStart) * 25),
+                        i == imeHandler.CandidatesSelection ? Color.Yellow : Color.White);
+                }
+                catch
+                {
+                    Trace.WriteLine($"Candidate string {imeHandler.Candidates[i]} has invalid codepoint in current font.");
+                }
+            }
+        }
 
 
 
