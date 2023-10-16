@@ -17,9 +17,11 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="font.ttf" />
+    <None Remove="源泉圆体-Medium.ttf" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="font.ttf" />
+    <EmbeddedResource Include="源泉圆体-Medium.ttf" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />

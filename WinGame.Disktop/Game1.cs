@@ -26,7 +26,6 @@ namespace WinGame.Disktop
         private BasicEffect _basicEffect;
         private Texture2D _textTexture;
         private SimpleFps fps = new SimpleFps();
-        private SpriteFont _font;
         private DynamicSpriteFont font1;
         private Effect _fontEffect;
         private WinFormsIMEHandler imeHandler;
@@ -143,7 +142,7 @@ namespace WinGame.Disktop
                 }
                 else
                 {
-                    Trace.WriteLine($"{e.CompositedText}{String.Join(' ', e.CandidateList?.Candidates)}");
+                    Trace.WriteLine($"{e.CompositedText}  {String.Join(' ', e.CandidateList?.Candidates)}");
                 }
             };
 
@@ -163,22 +162,18 @@ namespace WinGame.Disktop
             _basicEffect = new BasicEffect(GraphicsDevice);
             _basicEffect.VertexColorEnabled = true;
 
+            font1 = DynamicSpriteFont.FromTtf(GetManifestResourceStream("源泉圆体-Medium.ttf"), 24);
 
+            //Stopwatch sw = Stopwatch.StartNew();
+            //for (int i = 0; i < 100; i++)
+            //{
+            //    _textTexture = GraphicUtils.BuildString(GraphicsDevice, "56%", new System.Drawing.Font("Microsoft YaHei", 14));
+            //    _textTexture = GraphicUtils.BuildString(GraphicsDevice, "35%", new System.Drawing.Font("Microsoft YaHei", 14));
 
-            font1 = DynamicSpriteFont.FromTtf(GetManifestResourceStream("font.ttf"), 24);
+            //}
+            //sw.Stop();
 
-            _font = Content.Load<SpriteFont>("File");
-
-            Stopwatch sw = Stopwatch.StartNew();
-            for (int i = 0; i < 100; i++)
-            {
-                _textTexture = GraphicUtils.BuildString(GraphicsDevice, "56%", new System.Drawing.Font("Microsoft YaHei", 14));
-                _textTexture = GraphicUtils.BuildString(GraphicsDevice, "35%", new System.Drawing.Font("Microsoft YaHei", 14));
-
-            }
-            sw.Stop();
-
-            Console.WriteLine(sw.ElapsedMilliseconds);
+            //Console.WriteLine(sw.ElapsedMilliseconds);
         }
 
 
@@ -230,19 +225,20 @@ namespace WinGame.Disktop
             _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
             //_spriteBatch.Draw(this._iconTexture, new Rectangle(0, 0, 64, 64), Color.White);
             Primitives2D.DrawLine(_spriteBatch, new Vector2(100, 100), new Vector2(200, 300), Color.Red, 5.0f);
-            _spriteBatch.Draw(_textTexture, new Rectangle(200, 300, _textTexture.Width, _textTexture.Height), Color.Blue); //...and draw it!
-            var texture = GraphicUtils.BuildString(GraphicsDevice, $"{Math.Round(value / 360 * 100)}%", new System.Drawing.Font("Microsoft YaHei", 14));
+            //_spriteBatch.Draw(_textTexture, new Rectangle(200, 300, _textTexture.Width, _textTexture.Height), Color.Blue); //...and draw it!
+            //var texture = GraphicUtils.BuildString(GraphicsDevice, $"{Math.Round(value / 360 * 100)}%", new System.Drawing.Font("Microsoft YaHei", 14));
 
-            _spriteBatch.Draw(texture, new Rectangle(230, 240, texture.Width, texture.Height), Color.White);
-            _spriteBatch.DrawString(font1, "按下 F1 启用 / 停用 IME", new Vector2(400, 10), Color.White);
-            _spriteBatch.End();
-
-
-            _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
-
-            _spriteBatch.Draw(texture, new Rectangle(230, 240, texture.Width, texture.Height), Color.White);
+            //_spriteBatch.Draw(texture, new Rectangle(230, 240, texture.Width, texture.Height), Color.White);
+            _spriteBatch.DrawString(font1, $"{Math.Round(value / 360 * 100)}%", new Vector2(230, 240), Color.White);
 
             _spriteBatch.End();
+
+
+            //_spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
+
+            //_spriteBatch.Draw(texture, new Rectangle(230, 240, texture.Width, texture.Height), Color.White);
+
+            //_spriteBatch.End();
 
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
@@ -257,9 +253,10 @@ namespace WinGame.Disktop
 
             fps.DrawFps(_spriteBatch, font1, new Vector2(10f, 10f), Color.White);
             DrawIme();
+            _spriteBatch.DrawString(font1, "按下 F1 启用 / 停用 IME", new Vector2(400, 10), Color.White);
             _spriteBatch.End();
 
-            texture.Dispose();
+            //texture.Dispose();
             //GraphicsDevice.RasterizerState = RasterizerState.CullNone;
             //GraphicsDevice.RasterizerState = new RasterizerState
             //{
@@ -294,9 +291,11 @@ namespace WinGame.Disktop
         {
             const string DefaultChar = "?";
             Vector2 len = font1.MeasureString(inputContent);
-            Vector2 drawPos = new Vector2(15 + len.X, 50);
+            Vector2 drawPos = new Vector2(500 + len.X, 150);
             Vector2 measStr = new Vector2(0, font1.MeasureString("|").Y);
             Color compColor = Color.White;
+
+            _spriteBatch.DrawString(font1, inputContent, new Vector2(500, 150), compColor);
 
             if (imeHandler.CompositionCursorPos == 0)
                 _spriteBatch.Draw(whitePixel, new Rectangle((int)drawPos.X, (int)drawPos.Y, 1, (int)measStr.Y), Color.White);
@@ -337,7 +336,7 @@ namespace WinGame.Disktop
                 {
                     _spriteBatch.DrawString(font1,
                         String.Format("{0}.{1}", i + 1 - imeHandler.CandidatesPageStart, imeHandler.Candidates[i]),
-                        new Vector2(15 + len.X, 25 + 50 + (i - imeHandler.CandidatesPageStart) * 25),
+                        new Vector2(500 + len.X, 25 + 150 + (i - imeHandler.CandidatesPageStart) * 25),
                         i == imeHandler.CandidatesSelection ? Color.Yellow : Color.White);
                 }
                 catch
